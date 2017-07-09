@@ -1,0 +1,416 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
+Using R in Insurance
+==============================
+
+```{r wordcloud, echo=FALSE, message=FALSE, fig.cap='Markus Gesmann, GIRO Brussels, 19 September 2012', warning=FALSE}
+library(ChainLadder)
+library(googleVis)
+library(wordcloud)
+library(tm) 
+## About GIRO, sourced from:
+## http://www.actuaries.org.uk/events/residential/giro-conference-and-exhibition-2012/about 
+giro <- "The 39th Annual GIRO Conference and Exhibition, the annual gathering
+of the UK?s general insurance actuarial community, will be held at the heart of
+Europe this September. The SQUARE is a striking conference centre in the
+cultural centre of Brussels and one of the largest venues ever visited by GIRO
+and its growing delegation. Although the implementation of Solvency II may have
+suffered delays since the committee set its sights on Brussels some years ago,
+I am delighted to report that we are very much on track in our preparations
+for what promises to be a most enjoyable, stimulating and engaging programme.
+The programme will attract diverse groups within our community. Ensuring
+their broader appeal, our plenary sessions will again cover a wide range of
+topics from pricing, reserving and capital to leadership, climate change and
+the economy. To complement this, we have once again received an overwhelming
+response to our call for workshops. The committee is continually grateful for
+the support we receive in this regard and are very pleased to offer an array
+of workshops which will suit all tastes.
+Our theme for this year?s conference is Juggling uncertainty: the actuary?s
+part to play. Uncertainty is a word that the actuary has long
+contemplated  it underpins our profession?s motto ? and we are tasked
+with understanding and communicating this to users of our advice.
+Many of these users will not interpret this word in the same way ?
+perhaps part of the ?understanding gap? identified in the Morris review.
+Uncertainty is also a word that has not been far from the headlines in
+recent times, not least when describing the current European economic situation.
+In such times of apparent heightened uncertainty, there is more for us to
+juggle, more questions for us to answer and, importantly, a bigger role for us
+to fill. I hope our time in Brussels will give us an opportunity to discuss what
+those questions are, deliberate one or two answers and examine the part which we
+all, both individually and collectively, must play.
+Two hours from London, although relatively compact, Brussels is unmistakably a
+commercial and political hub. From the variety of languages, cuisines,
+architecture and art present, it is equally clear that it has maintained
+this status over many centuries. Having visited a number of venues within
+the UK in recent years, the committee has responded to feedback in selecting
+Brussels as a destination. I have no doubt that it offers a fitting backdrop
+to many of our current issues and a suitable environment for those important
+social elements of GIRO, both on- and off-programme. As always, we are excited
+to be offering a fun-filled social programme and, for those of you staying in
+Brussels for the weekend after the conference, I am confident that the city
+will not disappoint. One certainty that I can profess is that GIRO will
+continue to be an unrivalled opportunity for us to meet each other and
+strengthen our community
+"
+wordcloud(giro,colors=brewer.pal(6,"Dark2"),random.order=FALSE, min.freq=1)
+```
+
+<a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/deed.en_GB"><img      alt="Creative Commons Licence" style="border-width:0" src="http://i.creativecommons.org/l/by-sa/3.0/88x31.png" /></a><br/> <a href="http://validator.w3.org/check?uri=referer"><img      src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0 Strict" height="31" width="88" /></a>
+
+# Hello - About me 
+<ul> 
+  <li>Name: [Markus Gesmann](https://plus.google.com/118201313972528070577/posts)</li>
+  <li> Profession: Mathematician, working as an analyst at [Lloyd's](http://www.lloyds.com)</li>
+  <li>Maintainer and co-author of two R packages:
+  <ul>
+  <li>[ChainLadder](http://code.google.com/p/chainladder/): Statistical methods for the calculation of outstanding claims reserves in general insurance
+  <ul>
+  <li>Used by actuaries around the world for reserving and teaching</li>
+  </ul>
+  </li>
+  <li> [googleVis](http://code.google.com/p/google-motion-charts-with-r/): Interface between R and the Google Visualisation API
+  <ul>
+  <li>Used for data visualisation on www.lloyds.com <a href="http://www.lloyds.com/the-market/tools-and-resources/resources/statistics-relating-to-lloyds/visualisation">(1)</a>, <a href="http://www.lloyds.com/the-market/tools-and-resources/research/market-intelligence-toolkit/compare-countries">(2)</a></li>
+  </ul>
+  </li>
+  </ul>
+  </li>
+  <li>Founder and co-organise of the <a href="http://www.meetup.com/KoelnRUG/">Cologne R user group</a></li>
+  <li> Blogger: [mages' blog](http://lamges.blogspot.com)</li>
+</ul>
+
+# Agenda 
+
+<ul>
+<li>My motivation for using R</li>
+<li>Brief history of R and its way into insurance</li>
+<li>Three R examples</li>
+<li>R for actuaries: Where to start?</li>
+<li>How I created this presentation with R</li>
+<li>Conclusions and discussion</li>
+</ul>
+
+# Why I started using R
+<ul>
+<li> I started in insurance in 2003, fresh out of university</li>
+<li> I had used a variety of software, tools and languages already</li>
+<li> But I had no experience with spreadsheets</li>
+<li> I was surprised how people worked in insurance</li>
+<li> I was really surprised what colleagues did with spreadsheets</li>
+<li> I looked for alternative data analysis tools</li>
+<li> All the cool kids were talking about R</li>
+<li> I wanted to be cool as well</li>
+</ul>
+<a href="http://lamages.blogspot.com">
+<img src="http://2.bp.blogspot.com/-NAMnviVPFnw/Tw_OJRa7kII/AAAAAAAAAIo/ERYyvM2dV84/s1600/photo-1.JPG" alt="mages blog" /></a>
+
+
+# What is R?
+
+<img src="https://www.r-project.org/logo/Rlogo.png" alt="R project" width=50/>
+<ul>
+  <li> <a href="http://www.r-project.org">R</a> is a free software environment for statistical computing and graphics </li>
+  <li> It compiles and runs on a wide variety of UNIX platforms, Windows and OS X</li>
+  <li> <a href="http://www.burns-stat.com/pages/Present/infernoishR_annotated.pdf">Notes on the history of R by Pat Burns</a></li>
+</ul>
+
+# R made its way from academia to industry
+<ul>
+  <li> R started at universities in the <a href="http://www.stat.auckland.ac.nz/~ihaka/downloads/R-paper.pdf">1990s</a></li>
+  <li> It is still largely maintained by academics</li>
+  <li> R is widely used for research publications</li>
+  <li> <a href="http://lamages.blogspot.co.uk/2011/10/r-related-books-traditional-vs-online.html">Over 100 text books with R have been published already</a></li>
+  <li> Today many graduates leave universities with some R knowledge </li>
+</ul>
+
+# R made its way from academia to industry
+<ul>
+<li> Many commercial applications support R: 
+  <ul>
+  <li><a href="http://www.oracle.com/us/corporate/features/features-oracle-r-enterprise-498732.html">Oracle</a>, <a href="http://help.sap.com/hana/hana_dev_r_emb_en.pdf">SAP Hana</a>, <a href="http://support.sas.com/rnd/app/studio/Rinterface2.html">SAS</a>, <a href="http://www-01.ibm.com/software/analytics/spss/products/statistics/developer/">IBM SPSS</a>, <a href="http://spotfire.tibco.com/~/media/content-center/datasheets/r-splus.ashx">Spotfire</a>, <a href="http://www.statconn.com">MS Office</a>, <a href="http://community.qlikview.com/docs/DOC-2975">QlikView</a>, etc.
+  </li>
+  </ul></li>
+  <li> Commercial support is available from third parties, e.g.
+  <ul>
+  <li><a href="http://www.mango-solutions.com">Mango Solutions</a>, <a href="http://www.revolutionanalytics.com">Revolution Analytics</a>, <a href="http://www.trinostics.com">Trinostics LLC</a>, <a href="http://www.burns-stat.com">Burns Stats</a></li>
+ <li>Or contact me</li>
+ </ul></li>
+  <li> R is established in many disciplines outside academia, e.g. <a href="http://cran.r-project.org/web/views/ClinicalTrials.html">pharma</a> and <a href="http://cran.r-project.org/web/views/Finance.html">finance</a></li>
+  <li> The insurance industry is adopting R as well, e.g. <a href="https://docs.google.com/open?id=0By35Mtg9R9_RZTk5NzM1NGItYmUzMi00MmQ2LTk0MWYtYTY4YzZiNjg0ODc2">Lloyd's</a></li>
+</ul>
+
+
+# Why R in insurance?
+<ul>
+<li> 
+Why Excel, SAS, SQL, SPSS, Minitab, …?
+</li>
+<li> 
+<a href="http://www.johndcook.com/blog/">John D. Cook</a>: Why and how people use R
+</li>
+</ul>
+<a
+href="http://channel9.msdn.com/Events/Lang-NEXT/Lang-NEXT-2012/Why-and-How-People-Use-R"><img
+width="400" src="http://ch9files.blob.core.windows.net/ch9/3f13/009c002a-e4ef-4aeb-95de-e7ecda173f13/LangNEXT2012JohnCookRLanguage_Custom.jpg" alt="John D Cook talk about Why and how people
+use R"/></a>
+<ul>
+<li>
+Because it gets the job done!
+</li>
+</ul>
+
+# But why use a computing language?
+
+<img src="https://www.geeksaresexy.net/wp-content/uploads/2012/01/geeks-vs-nongeeks-repetitive-tasks.png" alt="Geeks vs Non-Geeks" />
+
+By <a href="https://plus.google.com/102451193315916178828/posts/MGxauXypb1Y">Bruno Oliveira</a>
+
+
+# Typical use cases for R in insurance 
+
+<ul>
+<li> Data transformation</li>
+<li> Data analysis</li>
+<li> Statistical modelling </li>
+<li> Prototyping / ad-hoc work </li>
+<li> End user computing </li>
+<li> Background statistical engine for applications, e.g. pricing spreadsheet</li>
+<li> Reporting and reproducible analysis, e.g. MI, Solvency II documentation  </li>
+<li> Learning statistical and actuarial skills </li>
+</ul>
+
+# Three R examples
+<ul>
+<li>Reserving: Mack and Bootstrap chain-ladder</li>
+<li>Automated reporting: Create PowerPoint slide with R output</li>
+<li>Extracting data from a web page: Display earth quakes of the last 30 days</li>
+</ul>
+
+# Reserving: Mack chain-ladder
+
+```{r ChainLadder, tidy=FALSE}
+library(ChainLadder) ## load ChainLadder functions
+data(GenIns) ## Famous Taylor / Ashe triangle
+## For the purpose of the presentation we change the data slightly
+dimnames(GenIns)$origin=2002:2011 ## original 1:10
+GenIns <- GenIns/1000 ## Requires less space on slide
+round(GenIns, 0) ## Display rounded figures
+```
+
+# Reserving: Mack chain-ladder
+
+```{r results='asis', echo=FALSE, message=FALSE}
+GenIns2 <- GenIns # example data set of the ChainLadder package
+class(GenIns2) <- "matrix" # change the class from triangle to matrix
+df <- as.data.frame(t(GenIns2)) # coerce triangle into a data.frame
+df$dev <-  1:10
+LC <- gvisLineChart(df, "dev", options=list(gvis.editor="Edit me!", 
+                                            title="Incurred claims",
+                                            hAxis='{title:"Development year"}',
+                                            width=800, height=500))
+
+print(LC, 'chart')
+```
+
+Chart created with <a href="http://code.google.com/p/google-motion-charts-with-r/">googleVis</a>
+
+# Reserving: Mack chain-ladder
+
+```{r}
+M <- MackChainLadder(GenIns, est.sigma="Mack")
+M
+```
+
+
+# Reserving: Mack chain-ladder
+```{r fig.cap="Check for trends in the residuals plots to verify if the Mack-model is reasonable"}
+plot(M) ## Default plot of a Mack chain-ladder output
+```
+
+
+# Reserving: Mack chain-ladder
+```{r fig.cap="Plot of developments, forecasts and standard errors"}
+plot(M, lattice=TRUE)
+```
+
+# Reserving: Bootstrap chain-ladder
+
+```{r}
+B <- BootChainLadder(GenIns, R=999) ## 999 bootstrap replicates
+B
+```
+
+
+# Reserving: Boot chain-ladder
+```{r fig.cap="Check if the model is reasonable"}
+plot(B) ## Default plot of a Bootstrap chain-ladder output
+```
+
+
+# Automated reporting: Create PowerPoint slide with R output
+```{r eval=FALSE, tidy=FALSE}
+myfile=tempfile()
+win.metafile(file=myfile)
+plot(M, lattice=TRUE)
+dev.off()
+## Load MS Office interface statconnDCOM
+library(rcom)
+## Run VBA code from R
+ppt<-comCreateObject("Powerpoint.Application")
+comSetProperty(ppt,"Visible",TRUE)
+myPresColl<-comGetProperty(ppt,"Presentations")
+myPres<-comInvoke(myPresColl,"Add")
+mySlides<-comGetProperty(myPres,"Slides")
+mySlide<-comInvoke(mySlides,"Add",1,12)
+myShapes<-comGetProperty(mySlide,"Shapes")
+myPicture<-comInvoke(myShapes,"AddPicture",
+                     myfile, 0,1,100,10)
+```
+Check license requirement for commercial use of <a href="http://www.statconn.com/products.html#pricing">statconnDCOM interface</a>.
+
+# Extracting data from a web page 
+
+```{r results='asis', tidy=FALSE}
+library(XML)
+library(googleVis)
+## Source data diretly from the web
+url <- "http://ds.iris.edu/sm2/eventlist/"
+eq <- readHTMLTable(readLines(url),
+                    colClasses=c("factor", rep("numeric", 4), "factor"))$evTable
+names(eq) <- c("DATE", "LAT", "LON", "MAG",
+               "DEPTH", "LOCATION_NAME", "IRIS_ID")
+##Format location data
+eq$loc=paste(eq$LAT, eq$LON, sep=":")  
+```
+<!-- <div align="center"> -->
+```{r results='asis' , echo=FALSE, message=FALSE}
+tbl <- gvisTable(eq, options=list(width=800, height=250))
+print(tbl, 'chart')
+```
+<!-- </div> -->
+
+# Display earth quake information of last 30 days
+```{r tidy=FALSE}
+library(googleVis)
+## Create a geo chart with the Google Chart API
+G <- gvisGeoChart(eq, "loc", "DEPTH", "MAG",
+                   options=list(displayMode="Markers", 
+                   colorAxis="{colors:['purple', 'red', 'orange', 'grey']}",
+                   backgroundColor="lightblue"), chartid="EQ")
+
+```
+```{r eval=FALSE}
+plot(G)
+```
+<!-- <div align="center"> -->
+```{r results='asis' , echo=FALSE, message=FALSE}
+print(G, 'chart')
+```
+<!-- </div> -->
+
+# Getting started with R in actuarial work
+
+<ul>
+<li><a href="http://www.dummies.com/store/product/R-For-Dummies.productCd-1119962846.html">R for Dummies</a> by Joris Meys and Andrie de Vries</li>
+<li><a href="http://toolkit.pbwiki.com/f/R%20Examples%20for%20Actuaries%20v0.1-1.pdf">Introduction to R for Actuaries</a> by Nigel de Silva</li>
+<li><a href="http://www1.fee.uva.nl/ke/act/people/kaas/ModernART.htm">Modern actuarial risk theory using R</a> by Kaas, Goovaerts, Dhaene and Denuit</li>
+<li><a href="http://www.slideshare.net/dataspora/an-interactive-introduction-to-r-programming-language-for-statistics">An Interactive Introduction To R</a> by Michael Driscoll and Dan Murphy</li>
+<li><a href="http://www.favir.net/">Formatted Actuarial Vignettes in R</a> by Ben Escoto</li>
+<li><a href="http://www.actuaries.org.uk/system/files/documents/pdf/actuarial-toolkit.pdf">An Actuarial Toolkit</a> presented at GIRO convention 2006 in Vienna</li>
+<li><a href="http://lamages.blogspot.co.uk/2011/09/r-and-insurance.html">Using R at Lloyd's</a> poster at UseR! conference 2011 in Warwick</li>
+<li><a href="http://wwww.r-bloggers.com">R-Bloggers</a></li>
+</ul>
+
+# R packages for actuaries on CRAN
+
+<ul>
+<li><a href="http://cran.r-project.org/web/packages/actuar/index.html">actuar:</a> Loss distributions modelling, risk theory (including ruin theory), simulation of compound hierarchical models and credibility theory</li>
+<li><a href="http://cran.r-project.org/web/packages/ChainLadder/index.html">ChainLadder:</a> Reserving methods in R</li>
+<li><a href="http://cran.r-project.org/web/packages/copula/index.html">copula:</a> Multivariate Dependence with Copulas</li>
+<li><a href="http://cran.r-project.org/web/packages/cplm/index.html">cplm:</a> Monte Carlo EM algorithms and Bayesian methods for fitting Tweedie compound Poisson linear models</li>
+<li><a href="http://cran.r-project.org/web/packages/evir/index.html">evir:</a> Extreme Values in R</li>
+<li><a href="http://cran.r-project.org/web/packages/fitdistrplus/index.html">fitdistrplus:</a> Help to fit of a parametric distribution to non-censored or censored data</li>
+<li><a href="http://cran.r-project.org/web/packages/lifecontingencies/index.html">lifecontingencies:</a> Package to perform actuarial evaluation of life contingencies</li>
+<li><a href="http://cran.r-project.org/web/packages/lossDev/index.html">lossDev:</a> A Bayesian time series loss development model</li>
+<li><a href="http://cran.r-project.org/web/packages/mondate/index.html">mondate:</a> R package to keep track of dates in terms of months</li>
+</ul>
+
+
+# Meet the R experts
+
+<table>
+<tr>
+<td>
+<ul>
+<li><a href="https://stat.ethz.ch/mailman/listinfo/r-sig-insurance">R special interest group insurance email list</a> </li>
+<li> <a href="http://www.londonr.org">London R user group</a></li>
+<li> <a href="https://www.rmetrics.org">R/Rmetrics Meielisalp Workshop on Computational Finance and Financial Engineering</a></li>
+<li> <a href="http://www.rinfinance.com">R in Finance, Chicago</a></li>
+<li> <a href="http://www3.uclm.es/congresos/useR-2013/">UseR! 2013, University of Castilla-La Mancha, Spain</a> </li>
+</ul>
+</td><td>
+<img height="350px" src="http://photos1.meetupstatic.com/photos/event/7/a/highres_133320122.jpeg" alt="London R photo" />
+
+London R user group meeting
+</td>
+</tr>
+</table>
+
+
+
+# How I created this presentation with RStudio, knitr, pandoc and slidy  
+<ul>
+<li> [knitr](http://yihui.name/knitr/) is a package by [Yihui Xie](http://yihui.name/) that brings literate programming to a new level 
+  <ul>
+  <li>It allows to create content really quickly, without worrying to much about layout and R formatting</li>
+</ul></li>
+<li> [RStudio](http://rstudio.org) integrated knitr into its IDE, which allows to knit Rmd-files by the push of a button into markdown</li>
+<li> Markdown output can be converted into several other file formats, such as html, with [pandoc](http://johnmacfarlane.net/pandoc/)</li>
+<li> [slidy](http://www.w3.org/Talks/Tools/Slidy2/Overview.html) is one of the options to create interactive html-slides with pandoc</li>
+<li> For more details see my recent [blog post](http://lamages.blogspot.co.uk/2012/05/interactive-reports-in-r-with-knitr-and.html) and [source code of this talk](https://gist.github.com/3687713).</li>
+</ul>
+<pre><code>
+Rscript -e "library(knitr); knit('Using_R_in_Insurance_GIRO_2012.Rmd')"
+pandoc -s -S -i -t slidy --mathjax Using_R_in_Insurance_GIRO_2012.md 
+  -o Using_R_in_Insurance_GIRO_2012.html
+</code></pre>
+
+
+# Conclusions
+
+<ul>
+<li> R comes with lots of functions for actuarial work</li>
+<li> It provides an ideal framework for end user computing</li>
+<li> R can automate the production of reproducible reports and presentations</li>
+<li> The momentum behind R has grown significantly over the last 5 years</li>
+<li> Today R is often known by graduates - open up to their ideas</li>
+<li> Many other software products developed R interfaces </li>
+<li> New business models have evolved and will evolve</li>
+</ul>
+
+# If you liked this presentation ...
+... you may also like:
+<ul>
+<li><a href="http://lamages.blogspot.co.uk/2012/09/interactive-web-graphs-with-r-overview.html">Interactive web graphs with R - Overview and googleVis tutorial</a>, Royal Statistical Society Conference, 2012</li>
+<li><a href="http://www.rinfinance.com/agenda/2012/talk/MarkusGesmann.pdf">Overview of Lloyd's using R and googleVis</a>, R in Finance, 2012</li>
+<li><a href="http://chainladder.googlecode.com/files/ChainLadder_Markus_20010Nov10.pdf">ChainLadder at the Predictive Modelling Seminar</a>, Institute of Actuaries, 2010 </li>
+<li><a href="http://code.google.com/p/chainladder/downloads/detail?name=R_and_MS_Office-MG-20100504.pdf">How to integrate R into MS Office</a>, LondonR, 2010 </li>
+<li><a href="http://lamages.blogspot.co.uk/2011/12/fitting-distributions-with-r.html">Fitting distribution with R</a>, blog post, December 2011</li>
+<li><a href="http://lamages.blogspot.co.uk/2012/01/say-it-in-r-with-by-apply-and-friends.html">Say it in R with "by", "apply" and friends</a>, blog post, January 2012 </li>
+</ul>
+
+# Questions?
+
+<ul>
+<li> Idea: R in Insurance Workshop - Interest? </li>
+<li>Contact: markus dot gesmann at gmail dot com</li>
+</ul>
+
+
+# R version and packages used for this presentation
+```{r}
+sessionInfo()
+```
